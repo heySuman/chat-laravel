@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\MessageController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -13,5 +14,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 });
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+Route::middleware('auth')->group(function () {
+    Route::get('/messages', [MessageController::class, 'index']);
+    Route::post('/messages', [MessageController::class, 'store']);
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/chat/{user}', function (App\Models\User $user) {
+        return Inertia::render('Chat/Index', [
+            'receiverId' => $user->id,
+        ]);
+    })->name('chat.show');
+});
+
+Broadcast::routes(['middleware' => ['auth']]);;
+
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';
