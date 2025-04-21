@@ -27,7 +27,7 @@ Route::middleware('auth')->group(function () {
     })->name('chat.show');
 });
 
-Broadcast::routes(['middleware' => ['auth']]);;
+Broadcast::routes(['middleware' => ['auth', 'web']]);;
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
