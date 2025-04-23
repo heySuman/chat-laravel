@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\MessageController;
@@ -21,10 +22,17 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/chat/{user}', function (App\Models\User $user) {
-        return Inertia::render('Chat/Index', [
+        return Inertia::render('Chat/Show', [
             'receiverId' => $user->id,
+            'users' => User::where('id', '!=', auth()->id())->get(),
         ]);
     })->name('chat.show');
+
+    Route::get('/chat', function (App\Models\User $user) {
+        return Inertia::render('Chat/Index', [
+            'users' => User::where('id', '!=', auth()->id())->get(),
+        ]);
+    })->name('chat.index');
 });
 
 Broadcast::routes(['middleware' => ['auth', 'web']]);;
